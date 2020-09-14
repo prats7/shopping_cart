@@ -31,7 +31,11 @@ class App extends React.Component {
   // }
 
   componentDidMount() {
-    this.db.collection("products").onSnapshot(snapshot => {
+    this.db.collection("products")
+    //.where('price', '==', 9999 )
+    //.where('title', '==', 'Mobile')
+    //.orderBy('price','desc')
+    .onSnapshot(snapshot => {
       const products = snapshot.docs.map(doc => {
         const data = doc.data();
         data["id"] = doc.id;
@@ -96,9 +100,20 @@ class App extends React.Component {
 
     const items = products.filter(product => product.id !== id);
 
-    this.setState({
-      products: items
-    });
+    // this.setState({
+    //   products: items
+    // });
+
+    const docRef = this.db.collection('products').doc(id);
+    docRef
+    .delete()
+    .then( () => {
+      console.log('Deleted Successfully');
+    })
+    .catch( (error) => {
+      console.log('Error: ',error);
+    })
+
   };
 
   getcountOfCartItems = () => {
